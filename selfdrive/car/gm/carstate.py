@@ -141,7 +141,7 @@ class CarState(CarStateBase):
       ("ACCCmdActive", "ASCMActiveCruiseControlStatus", 0),
     ]
 
-    if CP.carFingerprint == CAR.VOLT CP.carFingerprint == CAR.BOLT:
+    if CP.carFingerprint == CAR.VOLT or CP.carFingerprint == CAR.BOLT:
       signals += [
         ("RegenPaddle", "EBCMRegenPaddle", 0),
       ]
