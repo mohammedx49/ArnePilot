@@ -75,6 +75,10 @@ class CarController():
     # Send CAN commands.
     can_sends = []
 
+    # FCW: trigger FCWAlert for 100 frames (4 seconds)
+    if hud_alert == VisualAlert.fcw:
+      self.fcw_frames = 100
+
     ### STEER ###
 
     if (frame % P.STEER_STEP) == 0:
