@@ -34,6 +34,7 @@ bool can_pop(can_ring *q, CAN_FIFOMailBox_TypeDef *elem);
 
 // Ignition detected from CAN meessages
 bool ignition_can = false;
+bool ignition_cadillac = false;
 uint32_t ignition_can_cnt = 0U;
 
 // end API
@@ -354,9 +355,14 @@ void ignition_can_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
   if (bus == 0) {
     // GM exception
+    if ((addr == 0x160) && (len == 5)) {
+      // this message isn't all zeros when ignition is on
+      ignition_cadillac = GET_BYTES_04(to_push) != 0;
+    }
     if ((addr == 0x1F1) && (len == 8)) {
       //Bit 5 is ignition "on"
-      ignition_can = (GET_BYTE(to_push, 0) & 0x20) != 0;
+      bool ignition_gm = ((GET_BYTE(to_push, 0) & 0x20) != 0);
+      ignition_can = ignition_gm || ignition_cadillac;
     }
     // Tesla exception
     if ((addr == 0x348) && (len == 8)) {
@@ -429,6 +435,25 @@ bool can_tx_check_min_slots_free(uint32_t min) {
     (can_slots_empty(&can_txgmlan_q) >= min);
 }
 
+void pump_send(pump_hook hook) {
+  uint8_t bus_number = 0U;
+  if (hook == NULL) return;
+  CAN_FIFOMailBox_TypeDef *to_push = hook();
+  if (to_push != NULL) {
+    if (bus_number < BUS_MAX) {
+      // add CAN packet to send queuesend
+      // bus number isn't passed through
+      to_push->RDTR &= 0xF;
+      if ((bus_number == 3U) && (can_num_lookup[3] == 0xFFU)) {
+        gmlan_send_errs += bitbang_gmlan(to_push) ? 0U : 1U;
+      } else {
+        can_fwd_errs += can_push(can_queues[bus_number], to_push) ? 0U : 1U;
+        process_can(CAN_NUM_FROM_BUS_NUM(bus_number));
+      }
+    }
+  }
+}
+
 void can_send(CAN_FIFOMailBox_TypeDef *to_push, uint8_t bus_number, bool skip_tx_hook) {
   if (skip_tx_hook || safety_tx_hook(to_push) != 0) {
     if (bus_number < BUS_MAX) {
@@ -471,4 +496,3 @@ bool can_init(uint8_t can_number) {
   }
   return ret;
 }
-
