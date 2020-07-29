@@ -62,7 +62,7 @@ class CarInterfaceBase():
     # standard ALC params
     ret.steerControlType = car.CarParams.SteerControlType.torque
     ret.steerMaxBP = [0.]
-    ret.steerMaxV = [1.]
+    ret.steerMaxV = [1.15]
 
     # stock ACC by default
     ret.enableCruise = True
@@ -91,7 +91,7 @@ class CarInterfaceBase():
   def apply(self, c):
     raise NotImplementedError
 
-  def create_common_events(self, cs_out, extra_gears=[], gas_resume_speed=-1, pcm_enable=True):
+  def create_common_events(self, cs_out, extra_gears=[], gas_resume_speed=-1):
     if cs_out.cruiseState.enabled and not self.CS.out.cruiseState.enabled:  # this lets us modularize which checks we want to turn off op if cc was engaged previoiusly or not
       disengage_event = True
     else:
@@ -121,8 +121,8 @@ class CarInterfaceBase():
       events.append(create_event('wrongCarMode', [ET.NO_ENTRY, ET.USER_DISABLE]))
     if cs_out.espDisabled:
       events.append(create_event('espDisabled', [ET.NO_ENTRY, ET.SOFT_DISABLE]))
-    if cs_out.gasPressed and disengage_event:
-      events.append(create_event('pedalPressed', [ET.PRE_ENABLE]))
+    #if cs_out.gasPressed and disengage_event:
+    #  events.append(create_event('pedalPressed', [ET.PRE_ENABLE]))
 
     # TODO: move this stuff to the capnp strut
     if getattr(self.CS, "steer_error", False):
@@ -133,16 +133,16 @@ class CarInterfaceBase():
     # Disable on rising edge of gas or brake. Also disable on brake when speed > 0.
     # Optionally allow to press gas at zero speed to resume.
     # e.g. Chrysler does not spam the resume button yet, so resuming with gas is handy. FIXME!
-    if disengage_event and ((cs_out.gasPressed and (not self.CS.out.gasPressed) and cs_out.vEgo > gas_resume_speed) or \
-       (cs_out.brakePressed and (not self.CS.out.brakePressed or not cs_out.standstill))):
+    #if disengage_event and ((cs_out.gasPressed and (not self.CS.out.gasPressed) and cs_out.vEgo > gas_resume_speed) or \
+    #   (cs_out.brakePressed and (not self.CS.out.brakePressed or not cs_out.standstill))):
+    #  events.append(create_event('pedalPressed', [ET.NO_ENTRY, ET.USER_DISABLE]))
+    if cs_out.brakePressed and (not self.CS.out.brakePressed or not cs_out.standstill):
       events.append(create_event('pedalPressed', [ET.NO_ENTRY, ET.USER_DISABLE]))
 
-    # we engage when pcm is active (rising edge)
-    if pcm_enable:
-      if cs_out.cruiseState.enabled and not self.CS.out.cruiseState.enabled:
-        events.append(create_event('pcmEnable', [ET.ENABLE]))
-      elif not cs_out.cruiseState.enabled:
-        events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
+    if cs_out.cruiseState.enabled and not self.CS.out.cruiseState.enabled:
+      events.append(create_event('pcmEnable', [ET.ENABLE]))
+    elif not cs_out.cruiseState.enabled:
+      events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
 
     return events, eventsArne182
 
