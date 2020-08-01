@@ -38,6 +38,7 @@ class CarInterface(CarInterfaceBase):
     #ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV, ret.lateralTuning.pid.kfV = [[0.2], [0.00], [0.00004]]   # full torque for 20 deg at 80mph means 0.00007818594
     ret.steerRateCost = 1.0
     ret.steerActuatorDelay = 0.3  # Default delay, not measured yet
+    ret.enableGasInterceptor = 0x201 in fingerprint[0]
 
     if candidate == CAR.VOLT:
       # supports stop and go, but initial engage must be above 18mph (which include conservatism)
@@ -127,14 +128,14 @@ class CarInterface(CarInterfaceBase):
     ret.tireStiffnessFront, ret.tireStiffnessRear = scale_tire_stiffness(ret.mass, ret.wheelbase, ret.centerToFront,
                                                                          tire_stiffness_factor=tire_stiffness_factor)
 
-    ret.longitudinalTuning.kpBP = [5., 35.]
+    ret.longitudinalTuning.kpBP = [0., 35.]
     #ret.longitudinalTuning.kpV = [2.4, 1.5]
-    ret.longitudinalTuning.kpV = [0.3, 0.3]
-    ret.longitudinalTuning.kiBP = [0.]
+    ret.longitudinalTuning.kpV = [0.6, 0.7]
+    ret.longitudinalTuning.kiBP = [0., 35.]
     #ret.longitudinalTuning.kiV = [0.36]
-    ret.longitudinalTuning.kiV = [0.1]
+    ret.longitudinalTuning.kiV = [0.12, 0.2]
 
-    ret.stoppingControl = True
+    ret.stoppingControl = False
     ret.startAccel = 0.8
 
     ret.steerLimitTimer = 0.4
