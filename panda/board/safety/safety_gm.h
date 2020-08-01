@@ -313,7 +313,7 @@ static int gm_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
 
 static CAN_FIFOMailBox_TypeDef * gm_pump_hook(void) {
   //volatile int pedal_pressed = (volatile int)gm_gas_prev || ((volatile int)gm_brake_prev && (volatile int)gm_moving);
-  volatile int pedal_pressed = (volatile int)brake_pressed_prev && (volatile int)vehicle_moving
+  volatile int pedal_pressed = (volatile int)brake_pressed_prev && (volatile int)vehicle_moving;
   volatile bool current_controls_allowed = (volatile bool)controls_allowed && !(volatile int)pedal_pressed;
 
   if (!gm_ffc_detected) {
