@@ -11,18 +11,18 @@ from common.op_params import opParams
 ButtonType = car.CarState.ButtonEvent.Type
 
 op_params = opParams()
-STEER_RATIO = self.op_params.get('steer_ratio', default = 14.0)
-TIRE_STIFFNESS = self.op_params.get('tire_stiffness', default = 0.5)
-STEER_RATE = self.op_params.get('steer_rate', default = 1.0)
-STEER_DELAY = self.op_params.get('steer_delay', default = 0.3)
+STEER_RATIO = op_params.get('steer_ratio', default = 14.0)
+TIRE_STIFFNESS = op_params.get('tire_stiffness', default = 0.5)
+STEER_RATE = op_params.get('steer_rate', default = 1.0)
+STEER_DELAY = op_params.get('steer_delay', default = 0.3)
 
-LQR_SCALE = self.op_params.get('lqr_scale', default = 1500.0)
-LQR_KI = self.op_params.get('lqr_ki', default = 0.06)
+LQR_SCALE = op_params.get('lqr_scale', default = 1500.0)
+LQR_KI = op_params.get('lqr_ki', default = 0.06)
 
-INDI_OLG = self.op_params.get('indi_olg', default = 5.0)
-INDI_ILG = self.op_params.get('indi_ilg', default = 4.2)
-INDI_TIME = self.op_params.get('indi_time', default = 1.8)
-INDI_ACTUATOR = self.op_params.get('lqr_act', default = 2.0)
+INDI_OLG = op_params.get('indi_olg', default = 5.0)
+INDI_ILG = op_params.get('indi_ilg', default = 4.2)
+INDI_TIME = op_params.get('indi_time', default = 1.8)
+INDI_ACTUATOR = op_params.get('lqr_act', default = 2.0)
 
 class CarInterface(CarInterfaceBase):
 
