@@ -10,7 +10,7 @@ from common.op_params import opParams
 
 ButtonType = car.CarState.ButtonEvent.Type
 
-self.op_params = opParams()
+op_params = opParams()
 STEER_RATIO = self.op_params.get('steer_ratio', default = 14.0)
 TIRE_STIFFNESS = self.op_params.get('tire_stiffness', default = 0.5)
 STEER_RATE = self.op_params.get('steer_rate', default = 1.0)
