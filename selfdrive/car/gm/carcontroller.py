@@ -6,13 +6,14 @@ from selfdrive.car import apply_std_steer_torque_limits
 from selfdrive.car.gm import gmcan
 from selfdrive.car.gm.values import DBC, CanBus
 from opendbc.can.packer import CANPacker
+from common.op_params import opParams
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
 
 class CarControllerParams():
   def __init__(self):
-    self.STEER_MAX = 300
+    #self.STEER_MAX = 300
     self.STEER_STEP = 2              # how often we update the steer cmd
     self.STEER_DELTA_UP = 7          # ~0.75s time to peak torque (255/50hz/0.75s)
     self.STEER_DELTA_DOWN = 14       # ~0.3s from peak torque to zero
@@ -36,7 +37,6 @@ class CarControllerParams():
     self.GAS_LOOKUP_V = [self.MAX_ACC_REGEN, ZERO_GAS, MAX_GAS]
     self.BRAKE_LOOKUP_BP = [-1., -0.25]
     self.BRAKE_LOOKUP_V = [MAX_BRAKE, 0]
-
 
 def actuator_hystereses(final_pedal, pedal_steady):
   # hyst params... TODO: move these to VehicleParams
@@ -67,10 +67,19 @@ class CarController():
     self.packer_pt = CANPacker(DBC[CP.carFingerprint]['pt'])
     self.packer_ch = CANPacker(DBC[CP.carFingerprint]['chassis'])
 
+    self.op_params = opParams()
+    self.STEER_MAX1 = self.op_params.get('steer_max1', default = 300)
+    self.STEER_MAX2 = self.op_params.get('steer_max2', default = 300)
+    self.STEER_MAX3 = self.op_params.get('steer_max3', default = 300)
+
   def update(self, enabled, CS, frame, actuators, \
              hud_v_cruise, hud_show_lanes, hud_show_car, hud_alert):
 
     P = self.params
+
+    self.STEER_MAX1 = self.op_params.get('steer_max1', default = 300)
+    self.STEER_MAX2 = self.op_params.get('steer_max2', default = 300)
+    self.STEER_MAX3 = self.op_params.get('steer_max3', default = 300)
 
     # Send CAN commands.
     can_sends = []
@@ -85,9 +94,11 @@ class CarController():
       lkas_enabled = enabled and not CS.steer_warning and CS.out.vEgo > P.MIN_STEER_SPEED
       if lkas_enabled:
         if CS.out.vEgo < 9.7:
-          new_steer = actuators.steer * (P.STEER_MAX * 0.7)
+          new_steer = actuators.steer * (self.STEER_MAX1 * 0.7)
+        elif CS.out.vEgo < 19.4:
+          new_steer = actuators.steer * (self.STEER_MAX2 * 0.8)
         else:
-          new_steer = actuators.steer * (P.STEER_MAX * 0.8)
+          new_steer = actuators.steer * (self.STEER_MAX3 * 0.85)
 
         apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, P)
         self.steer_rate_limited = new_steer != apply_steer

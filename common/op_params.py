@@ -71,6 +71,19 @@ class opParams:
                            'use_car_caching': {'default': True, 'allowed_types': [bool], 'description': 'Whether to use fingerprint caching', 'live': False},
                            'min_TR': {'default': None, 'allowed_types': [type(None), float, int], 'description': 'The minimum allowed following distance in seconds. Default is 0.9 seconds.\n'
                                                                                                                  'The range is limited from 0.85 to 1.3. Set to None to disable', 'live': True},
+                           'steer_max1': {'default': 300, 'allowed_types': [float, int], 'description': 'Steer Max to use in carcontroller.py', 'live': True},
+                           'steer_max2': {'default': 300, 'allowed_types': [float, int], 'description': 'Steer Max to use in carcontroller.py', 'live': True},
+                           'steer_max3': {'default': 300, 'allowed_types': [float, int], 'description': 'Steer Max to use in carcontroller.py', 'live': True},
+                           'steer_ratio': {'default': 14.0, 'allowed_types': [float, int], 'description': 'Steer ratio to use in interface.py', 'live': False},
+                           'tire_stiffness': {'default': 0.5, 'allowed_types': [float, int], 'description': 'Tire stiffness to use in interface.py', 'live': False},
+                           'steer_delay': {'default': 0.3, 'allowed_types': [float, int], 'description': 'Steer actuator delay to use in interface.py', 'live': False},
+                           'steer_rate': {'default': 1.0, 'allowed_types': [float, int], 'description': 'Steer rate to use in interface.py', 'live': False},
+                           'lqr_scale': {'default': 1500.0, 'allowed_types': [float, int], 'description': 'LQR Scale to use in interface.py', 'live': False},
+                           'lqr_ki': {'default': 0.06, 'allowed_types': [float, int], 'description': 'LQR Ki to use in interface.py', 'live': False},
+                           'indi_olg': {'default': 5.0, 'allowed_types': [float, int], 'description': 'INDI OuterLoopGain to use in interface.py', 'live': False},
+                           'indi_ilg': {'default': 4.2, 'allowed_types': [float, int], 'description': 'INDI InnerLoopGain to use in interface.py', 'live': False},
+                           'indi_time': {'default': 1.8, 'allowed_types': [float, int], 'description': 'INDI TimeConstant to use in interface.py', 'live': False},
+                           'indi_act': {'default': 2.0, 'allowed_types': [float, int], 'description': 'INDI ActuatorEffectiveness to use in interface.py', 'live': False},
                            }
 
     self.params = {}

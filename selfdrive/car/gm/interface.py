@@ -6,8 +6,23 @@ from selfdrive.car.gm.values import CAR, Ecu, ECU_FINGERPRINT, CruiseButtons, \
                                     AccState, FINGERPRINTS
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, is_ecu_disconnected, gen_empty_fingerprint
 from selfdrive.car.interfaces import CarInterfaceBase
+from common.op_params import opParams
 
 ButtonType = car.CarState.ButtonEvent.Type
+
+self.op_params = opParams()
+STEER_RATIO = self.op_params.get('steer_ratio', default = 14.0)
+TIRE_STIFFNESS = self.op_params.get('tire_stiffness', default = 0.5)
+STEER_RATE = self.op_params.get('steer_rate', default = 1.0)
+STEER_DELAY = self.op_params.get('steer_delay', default = 0.3)
+
+LQR_SCALE = self.op_params.get('lqr_scale', default = 1500.0)
+LQR_KI = self.op_params.get('lqr_ki', default = 0.06)
+
+INDI_OLG = self.op_params.get('indi_olg', default = 5.0)
+INDI_ILG = self.op_params.get('indi_ilg', default = 4.2)
+INDI_TIME = self.op_params.get('indi_time', default = 1.8)
+INDI_ACTUATOR = self.op_params.get('lqr_act', default = 2.0)
 
 class CarInterface(CarInterfaceBase):
 
@@ -36,8 +51,10 @@ class CarInterface(CarInterfaceBase):
     # Start with a baseline lateral tuning for all GM vehicles. Override tuning as needed in each model section below.
     #ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP, ret.lateralTuning.pid.kfBP = [[0.], [0.], [0.]]
     #ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV, ret.lateralTuning.pid.kfV = [[0.2], [0.00], [0.00004]]   # full torque for 20 deg at 80mph means 0.00007818594
-    ret.steerRateCost = 1.0
-    ret.steerActuatorDelay = 0.3  # Default delay, not measured yet
+    #ret.steerRateCost = 1.0
+    #ret.steerActuatorDelay = 0.3  # Default delay, not measured yet
+    ret.steerActuatorDelay = STEER_DELAY
+    ret.steerRateCost = STEER_RATE
 
     if candidate == CAR.VOLT:
       # supports stop and go, but initial engage must be above 18mph (which include conservatism)
@@ -54,19 +71,20 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 1616. + STD_CARGO_KG
       ret.safetyModel = car.CarParams.SafetyModel.gm
       ret.wheelbase = 2.60096
-      ret.steerRatio = 14.0
+      #ret.steerRatio = 14.0
+      ret.steerRatio = STEER_RATIO
       ret.steerRatioRear = 0.
       ret.centerToFront = ret.wheelbase * 0.4 # wild guess
 
       #ret.lateralTuning.init('indi')
-      #ret.lateralTuning.indi.innerLoopGain = 5.0
-      #ret.lateralTuning.indi.outerLoopGain = 4.2
-      #ret.lateralTuning.indi.timeConstant = 1.8
-      #ret.lateralTuning.indi.actuatorEffectiveness = 2.0
+      #ret.lateralTuning.indi.innerLoopGain = INDI_OLG
+      #ret.lateralTuning.indi.outerLoopGain = INDI_ILG
+      #ret.lateralTuning.indi.timeConstant = INDI_TIME
+      #ret.lateralTuning.indi.actuatorEffectiveness = INDI_ACTUATOR
 
       ret.lateralTuning.init('lqr') #Rav4 from Arnepilot
-      ret.lateralTuning.lqr.scale = 1500.0
-      ret.lateralTuning.lqr.ki = 0.06
+      ret.lateralTuning.lqr.scale = LQR_SCALE
+      ret.lateralTuning.lqr.ki = LQR_KI
       ret.lateralTuning.lqr.a = [0., 1., -0.22619643, 1.21822268]
       ret.lateralTuning.lqr.b = [-1.92006585e-04, 3.95603032e-05]
       ret.lateralTuning.lqr.c = [1., 0.]
@@ -74,7 +92,8 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.lqr.l = [0.3233671, 0.3185757]
       ret.lateralTuning.lqr.dcGain = 0.002237852961363602
 
-      tire_stiffness_factor = 0.5
+      #tire_stiffness_factor = 0.5
+      tire_stiffness_factor = TIRE_STIFFNESS
 
     elif candidate == CAR.MALIBU:
       # supports stop and go, but initial engage must be above 18mph (which include conservatism)
