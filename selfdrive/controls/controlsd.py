@@ -474,7 +474,7 @@ def data_send(sm, pm, CS, CI, CP, VM, state, events, actuators, v_cruise_kph, rk
 
     CAMERA_OFFSET = op_params.get('camera_offset', 0.06)
 
-    l_lane_close = left_lane_visible and (sm['pathPlan'].lPoly[3] < (0.95 - CAMERA_OFFSET)) and not recent_blinker
+    l_lane_close = left_lane_visible and (sm['pathPlan'].lPoly[3] < (0.9 - CAMERA_OFFSET)) and not recent_blinker
     r_lane_close = right_lane_visible and (sm['pathPlan'].rPoly[3] > -(0.75 + CAMERA_OFFSET)) and not recent_blinker
 
     if ldw_allowed:
