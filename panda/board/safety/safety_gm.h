@@ -27,7 +27,8 @@ const int GM_DRIVER_TORQUE_FACTOR = 4;
 const int GM_MAX_GAS = 3072;
 const int GM_MAX_REGEN = 1404;
 const int GM_MAX_BRAKE = 350;
-const CanMsg GM_TX_MSGS[] = {{384, 0, 4}, {1033, 0, 7}, {1034, 0, 7}, {715, 0, 8}, {880, 0, 6},  // pt bus
+const int GM_GAS_INTERCEPTOR_THRESHOLD = 458;  // (610 + 306.25) / 2ratio between offset and gain from dbc file
+const CanMsg GM_TX_MSGS[] = {{384, 0, 4}, {1033, 0, 7}, {1034, 0, 7}, {715, 0, 8}, {880, 0, 6}, {512, 0, 6} // pt bus
                              {161, 1, 7}, {774, 1, 8}, {776, 1, 7}, {784, 1, 2},   // obs bus
                              {789, 2, 5},  // ch bus
                              {0x104c006c, 3, 3}, {0x10400060, 3, 5}};  // gmlan
@@ -41,6 +42,8 @@ AddrCheckStruct gm_rx_checks[] = {
   {.msg = {{417, 0, 7}}, .expected_timestep = 100000U},
 };
 const int GM_RX_CHECK_LEN = sizeof(gm_rx_checks) / sizeof(gm_rx_checks[0]);
+
+int gm_camera_bus = -1;
 
 static void gm_init_lkas_pump(void);
 
@@ -83,6 +86,16 @@ static void gm_set_op_lkas(CAN_FIFOMailBox_TypeDef *to_send) {
   gm_lkas_buffer.op_ts = TIM2->CNT;
 }
 
+static void gm_detect_cam(void) {
+  if (gm_camera_bus != -1) return;
+  if (board_has_relay()) {
+    gm_camera_bus = 2;
+  }
+  else {
+    gm_camera_bus = 1;
+  }
+}
+
 static int gm_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
   bool valid = addr_safety_check(to_push, gm_rx_checks, GM_RX_CHECK_LEN,
@@ -92,6 +105,7 @@ static int gm_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
   if (valid && (GET_BUS(to_push) == 0)) {
     int addr = GET_ADDR(to_push);
+    gm_detect_cam();
 
     if (addr == 388) {
       int torque_driver_new = ((GET_BYTE(to_push, 6) & 0x7) << 8) | GET_BYTE(to_push, 7);
@@ -152,6 +166,17 @@ static int gm_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
       }
     }
 
+    // exit controls on rising edge of gas press if interceptor (0x201 w/ len = 6)
+    if (addr == 0x201) {
+      gas_interceptor_detected = 1;
+      int gas_interceptor = GET_INTERCEPTOR(to_push);
+      if ((gas_interceptor > GM_GAS_INTERCEPTOR_THRESHOLD) &&
+          (gas_interceptor_prev <= GM_GAS_INTERCEPTOR_THRESHOLD)) {
+        //controls_allowed = 0; //TODO: remove / fix (probably problem with threshold)
+      }
+      gas_interceptor_prev = gas_interceptor;
+    }
+
     // Check if ASCM or LKA camera are online
     // on powertrain bus.
     // 384 = ASCMLKASteeringCmd
@@ -173,6 +198,7 @@ static int gm_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
 
   int tx = 1;
   int addr = GET_ADDR(to_send);
+  gm_detect_cam();
 
   if (!msg_allowed(to_send, GM_TX_MSGS, sizeof(GM_TX_MSGS)/sizeof(GM_TX_MSGS[0]))) {
     tx = 0;
@@ -190,6 +216,16 @@ static int gm_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   //  pedal_pressed = pedal_pressed || gas_pressed_prev;
   //}
   bool current_controls_allowed = controls_allowed && !pedal_pressed;
+
+  // GAS: safety check
+  if (addr == 0x200) {
+    if (!current_controls_allowed) {
+      if (GET_BYTE(to_send, 0) || GET_BYTE(to_send, 1)) {
+        puts("gas safety check failed");
+        tx = 0;
+      }
+    }
+  }
 
   // BRAKE: safety check
   if (addr == 789) {
@@ -286,14 +322,15 @@ static int gm_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
 }
 
 static int gm_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
+  gm_detect_cam();
   int bus_fwd = -1;
   if (bus_num == 0) {
     if (gm_ffc_detected) {
       //only perform forwarding if we have seen LKAS messages on CAN2
-      bus_fwd = 1;  // Camera is on CAN2
+      bus_fwd = gm_camera_bus;  // Camera is on CAN2
     }
   }
-  if (bus_num == 1) {
+  if (bus_num == gm_camera_bus) {
     int addr = GET_ADDR(to_fwd);
     if (addr != 384) {
       //only perform forwarding if we have seen LKAS messages on CAN2
