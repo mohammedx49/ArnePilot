@@ -6,7 +6,7 @@ from selfdrive.config import Conversions as CV
 V_CRUISE_MAX = 169
 V_CRUISE_MIN = 7
 V_CRUISE_DELTA = 7
-V_CRUISE_ENABLE_MIN = 7
+V_CRUISE_ENABLE_MIN = 42
 
 
 class MPC_COST_LAT:
@@ -72,7 +72,7 @@ def update_v_cruise(v_cruise_kph, buttonEvents, enabled):
     if enabled and not b.pressed:
       if b.type == "accelCruise":
         v_cruise_kph += V_CRUISE_DELTA - (v_cruise_kph % V_CRUISE_DELTA)
-      elif b.type == "decelCruise":
+    elif b.type == "cancel":
         v_cruise_kph -= V_CRUISE_DELTA - ((V_CRUISE_DELTA - v_cruise_kph) % V_CRUISE_DELTA)
       v_cruise_kph = clip(v_cruise_kph, V_CRUISE_MIN, V_CRUISE_MAX)
 

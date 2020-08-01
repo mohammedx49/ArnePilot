@@ -169,8 +169,8 @@ class CarInterface(CarInterfaceBase):
         be.pressed = False
         but = self.CS.prev_cruise_buttons
       if but == CruiseButtons.RES_ACCEL:
-        if not (ret.cruiseState.enabled and ret.standstill):
-          be.type = ButtonType.accelCruise # Suppress resume button if we're resuming from stop so we don't adjust speed.
+        #if not (ret.cruiseState.enabled and ret.standstill):
+        be.type = ButtonType.accelCruise # Suppress resume button if we're resuming from stop so we don't adjust speed.
       elif but == CruiseButtons.DECEL_SET:
         be.type = ButtonType.decelCruise
       elif but == CruiseButtons.CANCEL:
@@ -191,10 +191,10 @@ class CarInterface(CarInterfaceBase):
       events.append(create_event('parkBrake', [ET.NO_ENTRY, ET.USER_DISABLE]))
 
     # handle button presses
-    for b in ret.buttonEvents:
+    #for b in ret.buttonEvents:
       # do enable on both accel and decel buttons
-      if b.type in [ButtonType.accelCruise, ButtonType.decelCruise] and not b.pressed:
-        events.append(create_event('buttonEnable', [ET.ENABLE]))
+      #if b.type in [ButtonType.accelCruise, ButtonType.decelCruise] and not b.pressed:
+        #events.append(create_event('buttonEnable', [ET.ENABLE]))
       # do disable on button down
       #if b.type == ButtonType.cancel and b.pressed:
         #events.append(create_event('buttonCancel', [ET.USER_DISABLE]))
