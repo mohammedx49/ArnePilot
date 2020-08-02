@@ -84,6 +84,7 @@ class opParams:
                            'indi_ilg': {'default': 4.2, 'allowed_types': [float, int], 'description': 'INDI InnerLoopGain to use in interface.py', 'live': False},
                            'indi_time': {'default': 1.8, 'allowed_types': [float, int], 'description': 'INDI TimeConstant to use in interface.py', 'live': False},
                            'indi_act': {'default': 2.0, 'allowed_types': [float, int], 'description': 'INDI ActuatorEffectiveness to use in interface.py', 'live': False},
+                           'use_virutual_middle_line ': {'default': False, 'allowed_types': [bool], 'description': 'For roads over 4m wide, hug right. For roads under 2m wide, hug left.', 'live': False},
                            }
 
     self.params = {}
