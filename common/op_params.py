@@ -74,7 +74,7 @@ class opParams:
                            'steer_max1': {'default': 210, 'allowed_types': [float, int], 'description': 'Steer Max to use in carcontroller.py', 'live': False},
                            'steer_max2': {'default': 240, 'allowed_types': [float, int], 'description': 'Steer Max to use in carcontroller.py', 'live': False},
                            'steer_max3': {'default': 255, 'allowed_types': [float, int], 'description': 'Steer Max to use in carcontroller.py', 'live': False},
-                           'steer_ratio': {'default': 14.0, 'allowed_types': [float, int], 'description': 'Steer ratio to use in interface.py', 'live': False},
+                           'steer_ratio': {'default': 12.8, 'allowed_types': [float, int], 'description': 'Steer ratio to use in interface.py', 'live': False},
                            'tire_stiffness': {'default': 0.5, 'allowed_types': [float, int], 'description': 'Tire stiffness to use in interface.py', 'live': False},
                            'steer_delay': {'default': 0.3, 'allowed_types': [float, int], 'description': 'Steer actuator delay to use in interface.py', 'live': False},
                            'steer_rate': {'default': 1.0, 'allowed_types': [float, int], 'description': 'Steer rate to use in interface.py', 'live': False},

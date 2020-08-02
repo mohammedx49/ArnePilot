@@ -17,7 +17,7 @@ STEER_MAX3 = op_params.get('steer_max3', default = 255)
 
 class CarControllerParams():
   def __init__(self):
-    #self.STEER_MAX = 300
+    self.STEER_MAX = 300
     self.STEER_STEP = 2              # how often we update the steer cmd
     self.STEER_DELTA_UP = 7          # ~0.75s time to peak torque (255/50hz/0.75s)
     self.STEER_DELTA_DOWN = 14       # ~0.3s from peak torque to zero
@@ -90,9 +90,9 @@ class CarController():
     if (frame % P.STEER_STEP) == 0:
       lkas_enabled = enabled and not CS.steer_warning and CS.out.vEgo > P.MIN_STEER_SPEED
       if lkas_enabled:
-        if CS.out.vEgo < 9.7:
+        if CS.out.vEgo < 10.0:
           new_steer = actuators.steer * STEER_MAX1
-        elif CS.out.vEgo < 19.4:
+        elif CS.out.vEgo < 20.0:
           new_steer = actuators.steer * STEER_MAX2
         else:
           new_steer = actuators.steer * STEER_MAX3
