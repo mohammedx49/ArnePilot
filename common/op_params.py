@@ -71,9 +71,9 @@ class opParams:
                            'use_car_caching': {'default': True, 'allowed_types': [bool], 'description': 'Whether to use fingerprint caching', 'live': False},
                            'min_TR': {'default': None, 'allowed_types': [type(None), float, int], 'description': 'The minimum allowed following distance in seconds. Default is 0.9 seconds.\n'
                                                                                                                  'The range is limited from 0.85 to 1.3. Set to None to disable', 'live': True},
-                           'steer_max1': {'default': 300, 'allowed_types': [float, int], 'description': 'Steer Max to use in carcontroller.py', 'live': True},
-                           'steer_max2': {'default': 300, 'allowed_types': [float, int], 'description': 'Steer Max to use in carcontroller.py', 'live': True},
-                           'steer_max3': {'default': 300, 'allowed_types': [float, int], 'description': 'Steer Max to use in carcontroller.py', 'live': True},
+                           'steer_max1': {'default': 210, 'allowed_types': [float, int], 'description': 'Steer Max to use in carcontroller.py', 'live': False},
+                           'steer_max2': {'default': 240, 'allowed_types': [float, int], 'description': 'Steer Max to use in carcontroller.py', 'live': False},
+                           'steer_max3': {'default': 255, 'allowed_types': [float, int], 'description': 'Steer Max to use in carcontroller.py', 'live': False},
                            'steer_ratio': {'default': 14.0, 'allowed_types': [float, int], 'description': 'Steer ratio to use in interface.py', 'live': False},
                            'tire_stiffness': {'default': 0.5, 'allowed_types': [float, int], 'description': 'Tire stiffness to use in interface.py', 'live': False},
                            'steer_delay': {'default': 0.3, 'allowed_types': [float, int], 'description': 'Steer actuator delay to use in interface.py', 'live': False},

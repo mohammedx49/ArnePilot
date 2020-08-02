@@ -10,6 +10,10 @@ from common.op_params import opParams
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
+op_params = opParams()
+STEER_MAX1 = op_params.get('steer_max1', default = 210)
+STEER_MAX2 = op_params.get('steer_max2', default = 240)
+STEER_MAX3 = op_params.get('steer_max3', default = 255)
 
 class CarControllerParams():
   def __init__(self):
@@ -67,19 +71,12 @@ class CarController():
     self.packer_pt = CANPacker(DBC[CP.carFingerprint]['pt'])
     self.packer_ch = CANPacker(DBC[CP.carFingerprint]['chassis'])
 
-    self.op_params = opParams()
-    self.STEER_MAX1 = self.op_params.get('steer_max1', default = 300)
-    self.STEER_MAX2 = self.op_params.get('steer_max2', default = 300)
-    self.STEER_MAX3 = self.op_params.get('steer_max3', default = 300)
+
 
   def update(self, enabled, CS, frame, actuators, \
              hud_v_cruise, hud_show_lanes, hud_show_car, hud_alert):
 
     P = self.params
-
-    self.STEER_MAX1 = self.op_params.get('steer_max1', default = 300)
-    self.STEER_MAX2 = self.op_params.get('steer_max2', default = 300)
-    self.STEER_MAX3 = self.op_params.get('steer_max3', default = 300)
 
     # Send CAN commands.
     can_sends = []
@@ -94,11 +91,11 @@ class CarController():
       lkas_enabled = enabled and not CS.steer_warning and CS.out.vEgo > P.MIN_STEER_SPEED
       if lkas_enabled:
         if CS.out.vEgo < 9.7:
-          new_steer = actuators.steer * (self.STEER_MAX1 * 0.7)
+          new_steer = actuators.steer * STEER_MAX1
         elif CS.out.vEgo < 19.4:
-          new_steer = actuators.steer * (self.STEER_MAX2 * 0.8)
+          new_steer = actuators.steer * STEER_MAX2
         else:
-          new_steer = actuators.steer * (self.STEER_MAX3 * 0.85)
+          new_steer = actuators.steer * STEER_MAX3
 
         apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, P)
         self.steer_rate_limited = new_steer != apply_steer
