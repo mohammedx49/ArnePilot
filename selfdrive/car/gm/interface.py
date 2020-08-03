@@ -24,6 +24,12 @@ INDI_ILG = op_params.get('indi_ilg', default = 4.2)
 INDI_TIME = op_params.get('indi_time', default = 1.8)
 INDI_ACTUATOR = op_params.get('lqr_act', default = 2.0)
 
+PID_KP1 = op_params.get('kp1', default = 0.1)
+PID_KP2 = op_params.get('kp2', default = 0.24)
+PID_KI1 = op_params.get('ki1', default = 0.01)
+PID_KI2 = op_params.get('ki2', default = 0.019)
+PID_KF = op_params.get('kf', default = 0.00004)
+
 class CarInterface(CarInterfaceBase):
 
   @staticmethod
@@ -80,6 +86,10 @@ class CarInterface(CarInterfaceBase):
       #ret.lateralTuning.indi.outerLoopGain = INDI_ILG
       #ret.lateralTuning.indi.timeConstant = INDI_TIME
       #ret.lateralTuning.indi.actuatorEffectiveness = INDI_ACTUATOR
+
+      #ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0., 41.0], [0., 41.0]]
+      #ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[PID_KP1, PID_KP2], [PID_KI1, PID_KI2]]
+      #ret.lateralTuning.pid.kf = PID_KF
 
       ret.lateralTuning.init('lqr') #Rav4 from Arnepilot
       ret.lateralTuning.lqr.scale = LQR_SCALE

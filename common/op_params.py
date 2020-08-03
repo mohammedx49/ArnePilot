@@ -85,6 +85,11 @@ class opParams:
                            'indi_time': {'default': 1.8, 'allowed_types': [float, int], 'description': 'INDI TimeConstant to use in interface.py', 'live': False},
                            'indi_act': {'default': 2.0, 'allowed_types': [float, int], 'description': 'INDI ActuatorEffectiveness to use in interface.py', 'live': False},
                            'use_virutual_middle_line ': {'default': False, 'allowed_types': [bool], 'description': 'For roads over 4m wide, hug right. For roads under 2m wide, hug left.', 'live': False},
+                           'kp1': {'default': 0.1, 'allowed_types': [float, int], 'description': 'Lowest PID kp to use in interface.py', 'live': False},
+                           'kp2': {'default': 0.24, 'allowed_types': [float, int], 'description': 'Highest PID kp to use in interface.py', 'live': False},
+                           'ki1': {'default': 0.01, 'allowed_types': [float, int], 'description': 'Lowest PID ki to use in interface.py', 'live': False},
+                           'ki2': {'default': 0.019, 'allowed_types': [float, int], 'description': 'Lowest PID ki to use in interface.py', 'live': False},
+                           'kf': {'default': 0.00004, 'allowed_types': [float, int], 'description': 'PID kf to use in interface.py', 'live': False},
                            }
 
     self.params = {}
