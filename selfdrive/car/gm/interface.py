@@ -16,8 +16,8 @@ TIRE_STIFFNESS = op_params.get('tire_stiffness', default = 0.5)
 STEER_RATE = op_params.get('steer_rate', default = 1.0)
 STEER_DELAY = op_params.get('steer_delay', default = 0.3)
 
-LQR_SCALE = op_params.get('lqr_scale', default = 1600.0)
-LQR_KI = op_params.get('lqr_ki', default = 0.04)
+LQR_SCALE = op_params.get('lqr_scale', default = 1500.0)
+LQR_KI = op_params.get('lqr_ki', default = 0.06)
 
 INDI_OLG = op_params.get('indi_olg', default = 15.0)
 INDI_ILG = op_params.get('indi_ilg', default = 6.0)

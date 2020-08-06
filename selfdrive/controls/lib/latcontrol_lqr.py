@@ -47,7 +47,8 @@ class LatControlLQR():
     lqr_log = log.ControlsState.LateralLQRState.new_message()
 
     steers_max = get_steer_max(CP, v_ego)
-    torque_scale = (0.45 + v_ego / 60.0)**2  # Scale actuator model with speed
+    #torque_scale = (0.45 + v_ego / 60.0)**2  # Scale actuator model with speed
+    torque_scale = (0.6 + v_ego / 60.0)**2  # Scale actuator model with speed for BoltEV
 
 
     # Subtract offset. Zero angle should correspond to zero torque
@@ -68,7 +69,8 @@ class LatControlLQR():
 
       # LQR
       u_lqr = float(self.angle_steers_des / self.dc_gain - self.K.dot(self.x_hat))
-      lqr_output = torque_scale * u_lqr / self.scale
+      #lqr_output = torque_scale * u_lqr / self.scale
+      lqr_output = torque_scale * u_lqr / ((self.scale + 1000.0 / (v_ego / 4.5 + 2.0)) #Varient scale with speed
 
       # Integrator
       if steer_override:

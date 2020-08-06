@@ -11,9 +11,9 @@ from common.op_params import opParams
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
 op_params = opParams()
-STEER_MAX1 = op_params.get('steer_max1', default = 210)
-STEER_MAX2 = op_params.get('steer_max2', default = 240)
-STEER_MAX3 = op_params.get('steer_max3', default = 255)
+STEER_MAX1 = op_params.get('steer_max1', default = 180)
+STEER_MAX2 = op_params.get('steer_max2', default = 200)
+STEER_MAX3 = op_params.get('steer_max3', default = 230)
 
 class CarControllerParams():
   def __init__(self):
