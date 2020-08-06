@@ -77,7 +77,7 @@ class LatControlLQR():
         self.i_lqr -= self.i_unwind_rate * float(np.sign(self.i_lqr))
       else:
         error = self.angle_steers_des - angle_steers_k
-        i = self.i_lqr + self.ki * self.i_rate * error
+        i = self.i_lqr + self.ki * self.i_rate * error * abs((1 - 1/v_ego))  #Reduced error at low speed
         control = lqr_output + i
 
         if (error >= 0 and (control <= steers_max or i < 0.0)) or \
