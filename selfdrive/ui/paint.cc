@@ -57,24 +57,6 @@ static float lerp(float v0, float v1, float t) {
   return (1 - t) * v0 + t * v1;
 }
 
-static void ui_draw_custom_datas(UIState *s) {
-    const UIScene *scene = &s->scene;
-
-    int w = 184;
-    int x = (s->scene.ui_viz_rx + (bdr_s*2)) + 190;
-    int y = 100;
-    int xo = 180;
-    int height = 70;
-
-    nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
-    const int text_x = x + (xo / 2) + (w / 2);
-
-    char str[256];
-    snprintf(str, sizeof(str), "sR: %.3f", scene->lp_steerRatio);
-    ui_draw_text(s->vg, text_x, y, str, 25 * 2.5, COLOR_WHITE_ALPHA(200), s->font_sans_regular);
-
-}
-
 static void draw_chevron(UIState *s, float x_in, float y_in, float sz,
                           NVGcolor fillColor, NVGcolor glowColor) {
   const UIScene *scene = &s->scene;
@@ -1154,11 +1136,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     bb_ry = bb_y + bb_h;
   }
   */
-  //add custom data
-  if (true) {
-    ui_draw_custom_datas(s);
-  }
-   
+
    //add battery temperature
   if (true) {
     char val_str[16];

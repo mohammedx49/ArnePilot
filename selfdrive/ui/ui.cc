@@ -695,13 +695,7 @@ void handle_message(UIState *s, Message * msg) {
     s->scene.is_rhd = datad.isRHD;
     s->scene.awareness_status = datad.awarenessStatus;
     s->preview_started = datad.isPreview;
-  } else if (which == cereal::Event::LIVE_PARAMETERS){
-      auto data = event.getLiveParameters();
-      scene.lp_steerRatio = data.getSteerRatio();
-//      scene.lp_angleOffset = data.getAngleOffset();
-      scene.lp_stiffnessFactor = data.getStiffnessFactor();
   }
-
 
   s->started = s->thermal_started || s->preview_started ;
   // Handle onroad/offroad transition

@@ -201,14 +201,6 @@ typedef struct UIScene {
   int satelliteCount;
   uint8_t athenaStatus;
   int gear;
-
-  //custom
-  float lp_steerRatio;
-  float lp_stiffnessFactor;
-  float lp_angleOffset;
-
-  cereal::ControlsState::LateralINDIState::Reader indi;
-  cereal::ControlsState::LateralLQRState::Reader lqr;
 } UIScene;
 
 typedef struct {
