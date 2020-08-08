@@ -17,11 +17,10 @@ STEER_MAX3 = op_params.get('steer_max3', default = 230)
 
 class CarControllerParams():
   def __init__(self):
-    self.STEER_MAX = 1200
+    self.STEER_MAX = 300
     self.STEER_STEP = 2              # how often we update the steer cmd
-    self.STEER_DELTA_UP = 10          # ~0.75s time to peak torque (255/50hz/0.75s)
-    self.STEER_DELTA_DOWN = 20       # ~0.3s from peak torque to zero
-    self.STEER_ERROR_MAX = 350     # max delta between torque cmd and torque motor
+    self.STEER_DELTA_UP = 4          # ~0.75s time to peak torque (255/50hz/0.75s)
+    self.STEER_DELTA_DOWN = 4       # ~0.3s from peak torque to zero
     self.MIN_STEER_SPEED = 3.
     self.STEER_DRIVER_ALLOWANCE = 50   # allowed driver torque before start limiting
     self.STEER_DRIVER_MULTIPLIER = 4   # weight driver torque heavily
@@ -91,15 +90,14 @@ class CarController():
     if (frame % P.STEER_STEP) == 0:
       lkas_enabled = enabled and not CS.steer_warning and CS.out.vEgo > P.MIN_STEER_SPEED
       if lkas_enabled:
-        #if CS.out.vEgo < 10.0:
-         # new_steer = actuators.steer * STEER_MAX1
-        #elif CS.out.vEgo < 20.0:
-         # new_steer = actuators.steer * STEER_MAX2
-        #else:
-         # new_steer = actuators.steer * STEER_MAX3
-        new_steer = int(round(actuators.steer * P.STEER_MAX))
-        #apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, P)
-        apply_steer = apply_toyota_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorqueEps, P)
+        if CS.out.vEgo < 10.0:
+          new_steer = actuators.steer * STEER_MAX1
+        elif CS.out.vEgo < 20.0:
+          new_steer = actuators.steer * STEER_MAX2
+        else:
+          new_steer = actuators.steer * STEER_MAX3
+
+        apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, P)
         self.steer_rate_limited = new_steer != apply_steer
       else:
         apply_steer = 0
