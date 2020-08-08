@@ -76,13 +76,13 @@ class PathPlanner():
     self.sR_delay_counter = 0
     self.steerRatio_new = 0.0
     self.sR_time = 1
-    self.sR_Boost = [4.5, 2.5]
+    self.sR_Boost = [3.5, 2.5]
     self.sR_BoostBP = [10., 22.2]
     self.sR_Boost_new = 0.0
 
     self.steerRatio = self.op_params.get('steer_ratio', default = 12.0)
     self.sR = [self.steerRatio, self.steerRatio + self.sR_Boost_new]
-    self.sRBP = [3.0, 10.0]
+    self.sRBP = [2.5, 10.0]
 
   def setup_mpc(self):
     self.libmpc = libmpc_py.libmpc
@@ -142,7 +142,6 @@ class PathPlanner():
       self.sR_Boost_new = interp(v_ego, self.sR_BoostBP, self.sR_Boost)
       self.steerRatio = self.op_params.get('steer_ratio', default = 12.0)
       self.sR = [self.steerRatio, self.steerRatio + self.sR_Boost_new]
-      self.sRBP = [3.0, 10.0]
       self.sR_time = 100
 
       self.mpc_frame = 0
