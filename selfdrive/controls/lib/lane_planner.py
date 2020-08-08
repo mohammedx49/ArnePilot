@@ -98,7 +98,7 @@ class LanePlanner():
     #speed_lane_width = interp(v_ego, [0., 14., 20.], [2.5, 3., 3.5]) # German Standards
     speed_lane_width = interp(v_ego, [0., 19.], [3., 3.25]) # S.Korean Standards (urban)
     self.lane_width = self.lane_width_certainty * self.lane_width_estimate + \
-                      (1 - self.lane_width_certainty) * speed_lane_widt
+                      (1 - self.lane_width_certainty) * speed_lane_width
 
     self.d_poly = calc_d_poly(self.l_poly, self.r_poly, self.p_poly, self.l_prob, self.r_prob, min(4.0, self.lane_width), v_ego)
 

@@ -14,8 +14,8 @@ class CarControllerParams():
   def __init__(self):
     self.STEER_MAX = 300
     self.STEER_STEP = 2              # how often we update the steer cmd
-    self.STEER_DELTA_UP = 7          # ~0.75s time to peak torque (255/50hz/0.75s)
-    self.STEER_DELTA_DOWN = 14       # ~0.3s from peak torque to zero
+    self.STEER_DELTA_UP = 4          # ~0.75s time to peak torque (255/50hz/0.75s)
+    self.STEER_DELTA_DOWN = 4       # ~0.3s from peak torque to zero
     self.MIN_STEER_SPEED = 3.
     self.STEER_DRIVER_ALLOWANCE = 50   # allowed driver torque before start limiting
     self.STEER_DRIVER_MULTIPLIER = 4   # weight driver torque heavily
@@ -85,11 +85,11 @@ class CarController():
       lkas_enabled = enabled and not CS.steer_warning and CS.out.vEgo > P.MIN_STEER_SPEED
       if lkas_enabled:
         if CS.out.vEgo < 10.0:
-          new_steer = actuators.steer * 225
+          new_steer = actuators.steer * 210
         elif CS.out.vEgo < 20.0:
-          new_steer = actuators.steer * 245
+          new_steer = actuators.steer * 230
         else:
-          new_steer = actuators.steer * 255
+          new_steer = actuators.steer * 250
 
         apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, P)
         self.steer_rate_limited = new_steer != apply_steer

@@ -67,9 +67,9 @@ class CarState(CarStateBase):
     ret.espDisabled = pt_cp.vl["ESPStatus"]['TractionControlOn'] != 1
     self.pcm_acc_status = pt_cp.vl["ASCMActiveCruiseControlStatus"]['ACCCmdActive']
 
-    regen_pressed = False
+    self.regen_pressed = False
     if self.car_fingerprint == CAR.VOLT or self.car_fingerprint == CAR.BOLT:
-      regen_pressed = bool(pt_cp.vl["EBCMRegenPaddle"]['RegenPaddle'])
+      self.regen_pressed = bool(pt_cp.vl["EBCMRegenPaddle"]['RegenPaddle'])
     ret.regenPressed = self.regen_pressed
 
     # Regen braking is braking
@@ -108,7 +108,7 @@ class CarState(CarStateBase):
       ("PRNDL", "ECMPRDNL", 0),
       ("LKADriverAppldTrq", "PSCMStatus", 0),
       ("LKATorqueDeliveredStatus", "PSCMStatus", 0),
-      ("LKATorqueDeliveredStatus", "PSCMStatus", 0),
+      ("LKATotalTorqueDelivered", "PSCMStatus", 0),
       ("TractionControlOn", "ESPStatus", 0),
       ("EPBClosed", "EPBStatus", 0),
       ("CruiseMainOn", "ECMEngineStatus", 0),
@@ -154,7 +154,7 @@ class CarState(CarStateBase):
       ("PRNDL", "ECMPRDNL", 0),
       ("LKADriverAppldTrq", "PSCMStatus", 0),
       ("LKATorqueDeliveredStatus", "PSCMStatus", 0),
-      ("LKATorqueDeliveredStatus", "PSCMStatus", 0),
+      ("LKATotalTorqueDelivered", "PSCMStatus", 0),
       ("TractionControlOn", "ESPStatus", 0),
       ("EPBClosed", "EPBStatus", 0),
       ("CruiseMainOn", "ECMEngineStatus", 0),

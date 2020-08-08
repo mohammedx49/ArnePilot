@@ -66,8 +66,8 @@ class CarInterface(CarInterfaceBase):
       #ret.lateralTuning.indi.actuatorEffectiveness = 2.0
 
       ret.lateralTuning.init('lqr') #Rav4 from Arnepilot
-      ret.lateralTuning.lqr.scale = 1600.0
-      ret.lateralTuning.lqr.ki = 0.04
+      ret.lateralTuning.lqr.scale = 1500.0
+      ret.lateralTuning.lqr.ki = 0.05
       ret.lateralTuning.lqr.a = [0., 1., -0.22619643, 1.21822268]
       ret.lateralTuning.lqr.b = [-1.92006585e-04, 3.95603032e-05]
       ret.lateralTuning.lqr.c = [1., 0.]
@@ -129,10 +129,8 @@ class CarInterface(CarInterfaceBase):
                                                                          tire_stiffness_factor=tire_stiffness_factor)
 
     ret.longitudinalTuning.kpBP = [0., 35.]
-    #ret.longitudinalTuning.kpV = [2.4, 1.5]
     ret.longitudinalTuning.kpV = [0.6, 0.7]
     ret.longitudinalTuning.kiBP = [0., 35.]
-    #ret.longitudinalTuning.kiV = [0.36]
     ret.longitudinalTuning.kiV = [0.12, 0.2]
 
     ret.stoppingControl = False
@@ -184,7 +182,6 @@ class CarInterface(CarInterfaceBase):
     events, eventsArne182 = self.create_common_events(ret)
     if ret.brakePressed:
       events.append(create_event('pedalPressed', [ET.NO_ENTRY, ET.USER_DISABLE]))
-
     if ret.vEgo < self.CP.minEnableSpeed:
       events.append(create_event('speedTooLow', [ET.NO_ENTRY]))
     if self.CS.park_brake:
