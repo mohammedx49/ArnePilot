@@ -11,7 +11,7 @@ from common.op_params import opParams
 ButtonType = car.CarState.ButtonEvent.Type
 
 op_params = opParams()
-STEER_RATIO = op_params.get('steer_ratio', default = 13.2)
+#STEER_RATIO = op_params.get('steer_ratio', default = 13.2)
 TIRE_STIFFNESS = op_params.get('tire_stiffness', default = 0.5)
 STEER_RATE = op_params.get('steer_rate', default = 1.0)
 STEER_DELAY = op_params.get('steer_delay', default = 0.3)
@@ -76,8 +76,8 @@ class CarInterface(CarInterfaceBase):
       ret.minEnableSpeed = -1.
       ret.mass = 1616. + STD_CARGO_KG
       ret.wheelbase = 2.60096
-      #ret.steerRatio = 14.0
-      ret.steerRatio = STEER_RATIO
+      ret.steerRatio = 13.2
+      #ret.steerRatio = STEER_RATIO
       ret.steerRatioRear = 0.
       ret.centerToFront = ret.wheelbase * 0.4 # wild guess
 
