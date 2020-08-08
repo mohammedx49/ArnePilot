@@ -14,7 +14,7 @@ class LatControlLQR():
     #self.scale = CP.lateralTuning.lqr.scale
     #self.ki = CP.lateralTuning.lqr.ki
     self.scale_add = [400, 50]
-    self.scaleBP = [5., 22.2]
+    self.scaleBP = [10., 22.2]
     self.scale_add_new = 0.0
 
     self.A = np.array(CP.lateralTuning.lqr.a).reshape((2, 2))
