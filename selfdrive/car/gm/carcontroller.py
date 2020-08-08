@@ -11,16 +11,16 @@ from common.op_params import opParams
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
 op_params = opParams()
-STEER_MAX1 = op_params.get('steer_max1', default = 180)
-STEER_MAX2 = op_params.get('steer_max2', default = 200)
-STEER_MAX3 = op_params.get('steer_max3', default = 230)
+STEER_MAX1 = op_params.get('steer_max1', default = 230)
+STEER_MAX2 = op_params.get('steer_max2', default = 250)
+STEER_MAX3 = op_params.get('steer_max3', default = 270)
 
 class CarControllerParams():
   def __init__(self):
     self.STEER_MAX = 300
     self.STEER_STEP = 2              # how often we update the steer cmd
-    self.STEER_DELTA_UP = 3          # ~0.75s time to peak torque (255/50hz/0.75s)
-    self.STEER_DELTA_DOWN = 3       # ~0.3s from peak torque to zero
+    self.STEER_DELTA_UP = 4          # ~0.75s time to peak torque (255/50hz/0.75s)
+    self.STEER_DELTA_DOWN = 4       # ~0.3s from peak torque to zero
     self.MIN_STEER_SPEED = 3.
     self.STEER_DRIVER_ALLOWANCE = 50   # allowed driver torque before start limiting
     self.STEER_DRIVER_MULTIPLIER = 4   # weight driver torque heavily

@@ -76,10 +76,13 @@ class PathPlanner():
     self.sR_delay_counter = 0
     self.steerRatio_new = 0.0
     self.sR_time = 1
+    self.sR_Boost = [4.5, 2.5]
+    self.sR_BoostBP = [10., 22.2]
+    self.sR_Boost_new = 0.0
 
-    self.steerRatio = op_params.get('steer_ratio', default = 13.2)
-    self.sR = [float(self.steerRatio), (float(self.steerRatio) + 3.5)]
-    self.sRBP = [2.0, 10.0]
+    self.steerRatio = self.op_params.get('steer_ratio', default = 12.0)
+    self.sR = [self.steerRatio, self.steerRatio + self.sR_Boost_new]
+    self.sRBP = [3.0, 10.0]
 
   def setup_mpc(self):
     self.libmpc = libmpc_py.libmpc
@@ -136,14 +139,15 @@ class PathPlanner():
     self.mpc_frame += 1
     if self.mpc_frame % 500 == 0:
       # live tuning through /data/openpilot/tune.py overrides interface.py settings
-      self.steerRatio = op_params.get('steer_ratio', default = 13.2)
-      self.sR = [float(self.steerRatio), (float(self.steerRatio) + 3.5)]
-      self.sRBP = [2.0, 10.0]
+      self.sR_Boost_new = interp(v_ego, self.sR_BoostBP, self.sR_Boost)
+      self.steerRatio = self.op_params.get('steer_ratio', default = 12.0)
+      self.sR = [self.steerRatio, self.steerRatio + self.sR_Boost_new]
+      self.sRBP = [3.0, 10.0]
       self.sR_time = 100
 
       self.mpc_frame = 0
 
-    if v_ego > 11.111:
+    if v_ego > 5.0:
       # boost steerRatio by boost amount if desired steer angle is high
       self.steerRatio_new = interp(abs(angle_steers), self.sRBP, self.sR)
 

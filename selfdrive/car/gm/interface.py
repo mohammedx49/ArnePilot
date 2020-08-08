@@ -16,8 +16,8 @@ TIRE_STIFFNESS = op_params.get('tire_stiffness', default = 0.5)
 STEER_RATE = op_params.get('steer_rate', default = 1.0)
 STEER_DELAY = op_params.get('steer_delay', default = 0.3)
 
-LQR_SCALE = op_params.get('lqr_scale', default = 1500.0)
-LQR_KI = op_params.get('lqr_ki', default = 0.06)
+#LQR_SCALE = op_params.get('lqr_scale', default = 1500.0)
+#LQR_KI = op_params.get('lqr_ki', default = 0.06)
 
 INDI_OLG = op_params.get('indi_olg', default = 15.0)
 INDI_ILG = op_params.get('indi_ilg', default = 6.0)
@@ -92,8 +92,8 @@ class CarInterface(CarInterfaceBase):
       #ret.lateralTuning.pid.kf = PID_KF
 
       ret.lateralTuning.init('lqr') #Rav4 from Arnepilot
-      ret.lateralTuning.lqr.scale = LQR_SCALE
-      ret.lateralTuning.lqr.ki = LQR_KI
+      ret.lateralTuning.lqr.scale = 1500.0
+      ret.lateralTuning.lqr.ki = 0.05
       ret.lateralTuning.lqr.a = [0., 1., -0.22619643, 1.21822268]
       ret.lateralTuning.lqr.b = [-1.92006585e-04, 3.95603032e-05]
       ret.lateralTuning.lqr.c = [1., 0.]

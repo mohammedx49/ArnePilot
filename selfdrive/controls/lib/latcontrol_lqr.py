@@ -1,14 +1,20 @@
 import numpy as np
 from selfdrive.controls.lib.drive_helpers import get_steer_max
-from common.numpy_fast import clip
+from common.numpy_fast import clip, interp
 from common.realtime import DT_CTRL
 from cereal import log
 
 
 class LatControlLQR():
   def __init__(self, CP):
-    self.scale = CP.lateralTuning.lqr.scale
-    self.ki = CP.lateralTuning.lqr.ki
+    self.op_params = opParams()
+    self.scale = self.op_params.get('lqr_scale', default = 1500.0)
+    self.ki = self.op_params.get('lqr_ki', default = 0.05)
+    #self.scale = CP.lateralTuning.lqr.scale
+    #self.ki = CP.lateralTuning.lqr.ki
+    self.scale_add = [400, 50]
+    self.scaleBP = [5., 22.2]
+    self.scale_add_new = 0.0
 
     self.A = np.array(CP.lateralTuning.lqr.a).reshape((2, 2))
     self.B = np.array(CP.lateralTuning.lqr.b).reshape((2, 1))
@@ -67,10 +73,14 @@ class LatControlLQR():
     else:
       lqr_log.active = True
 
+      self.scale = self.op_params.get('lqr_scale', default = 1500.0)
+      self.ki = self.op_params.get('lqr_ki', default = 0.05)
+      self.scale_add_new = interp(v_ego, self.scaleBP, self.scale_add)
+
       # LQR
       u_lqr = float(self.angle_steers_des / self.dc_gain - self.K.dot(self.x_hat))
       #lqr_output = torque_scale * u_lqr / self.scale
-      lqr_output = torque_scale * u_lqr / (self.scale + 1000.0 / (v_ego / 4.5 + 2.0)) #Varient scale with speed
+      lqr_output = torque_scale * u_lqr / (self.scale + self.scale_add_new) #Varient scale with speed
 
       # Integrator
       if steer_override:
