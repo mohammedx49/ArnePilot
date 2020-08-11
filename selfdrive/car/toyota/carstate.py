@@ -75,7 +75,7 @@ class CarState(CarStateBase):
     else:
       ret.gas = cp.vl["GAS_PEDAL"]['GAS_PEDAL']
       ret.gasPressed = cp.vl["PCM_CRUISE"]['GAS_RELEASED'] == 0
-    
+
     ret.wheelSpeeds.fl = cp.vl["WHEEL_SPEEDS"]['WHEEL_SPEED_FL'] * CV.KPH_TO_MS
     ret.wheelSpeeds.fr = cp.vl["WHEEL_SPEEDS"]['WHEEL_SPEED_FR'] * CV.KPH_TO_MS
     ret.wheelSpeeds.rl = cp.vl["WHEEL_SPEEDS"]['WHEEL_SPEED_RL'] * CV.KPH_TO_MS
@@ -172,7 +172,7 @@ class CarState(CarStateBase):
     msg.arne182Status.leftBlindspotD1 = self.leftblindspotD1
     msg.arne182Status.leftBlindspotD2 = self.leftblindspotD2
     msg.arne182Status.gasbuttonstatus = self.gasbuttonstatus
-    
+
     if not travis:
       self.arne_sm.update(0)
       self.sm.update(0)
@@ -188,6 +188,7 @@ class CarState(CarStateBase):
     ret.steeringTorqueEps = cp.vl["STEER_TORQUE_SENSOR"]['STEER_TORQUE_EPS']
     # we could use the override bit from dbc, but it's triggered at too high torque values
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD
+    ret.steerWarning = cp.vl["EPS_STATUS"]['LKA_STATE'] not in [1, 5]
 
     if self.CP.carFingerprint == CAR.LEXUS_IS:
       self.main_on = cp.vl["DSU_CRUISE"]['MAIN_ON'] != 0
@@ -242,20 +243,20 @@ class CarState(CarStateBase):
     if not self.left_blinker_on and not self.right_blinker_on:
       self.Angles[self.Angle_counter] = abs(ret.steeringAngle)
       self.Angles_later[self.Angle_counter] = abs(angle_later)
-      if self.gasbuttonstatus ==1:
-        factor = 1.6
-      elif self.gasbuttonstatus == 2:
-        factor = 1.0
-      else:
-        factor = 1.3
-      ret.cruiseState.speed = int(min(ret.cruiseState.speed, factor * interp(np.max(self.Angles), self.Angle, self.Angle_Speed)))
-      ret.cruiseState.speed = int(min(ret.cruiseState.speed, factor * interp(np.max(self.Angles_later), self.Angle, self.Angle_Speed)))
     else:
       self.Angles[self.Angle_counter] = abs(ret.steeringAngle) * 0.8
       if ret.vEgo > 11:
         self.Angles_later[self.Angle_counter] = abs(angle_later) * 0.8
       else:
         self.Angles_later[self.Angle_counter] = 0.0
+    if self.gasbuttonstatus ==1:
+      factor = 1.6
+    elif self.gasbuttonstatus == 2:
+      factor = 1.0
+    else:
+      factor = 1.3
+    ret.cruiseState.speed = int(min(ret.cruiseState.speed, factor * interp(np.max(self.Angles), self.Angle, self.Angle_Speed)))
+    ret.cruiseState.speed = int(min(ret.cruiseState.speed, factor * interp(np.max(self.Angles_later), self.Angle, self.Angle_Speed)))
     self.Angle_counter = (self.Angle_counter + 1 ) % 250
 
     self.pcm_acc_status = cp.vl["PCM_CRUISE"]['CRUISE_STATE']
@@ -265,6 +266,7 @@ class CarState(CarStateBase):
       ret.cruiseState.standstill = False
     else:
       ret.cruiseState.standstill = self.pcm_acc_status == 7
+
     self.pcm_acc_active = bool(cp.vl["PCM_CRUISE"]['CRUISE_ACTIVE'])
     ret.cruiseState.enabled = self.pcm_acc_active
 
@@ -483,6 +485,12 @@ class CarState(CarStateBase):
     if CP.carFingerprint in TSS2_CAR:
       signals += [("L_ADJACENT", "BSM", 0)]
       signals += [("R_ADJACENT", "BSM", 0)]
+
+    if CP.carFingerprint in TSS2_CAR:
+      signals += [("L_ADJACENT", "BSM", 0)]
+      signals += [("L_APPROACHING", "BSM", 0)]
+      signals += [("R_ADJACENT", "BSM", 0)]
+      signals += [("R_APPROACHING", "BSM", 0)]
 
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
 

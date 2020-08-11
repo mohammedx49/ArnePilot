@@ -93,6 +93,8 @@ struct CarEventArne182 @0x9b1657f34caf3ad4 {
     leftALCbsm @6;
     preventALC @7;
     dfButtonAlert @8;
+    pcmEnable @9;
+    pcmDisable @10;
   }
 }
 
@@ -165,6 +167,10 @@ struct TrafficModelEvent {
   confidence @1 :Float32;
 }
 
+struct ModelLongButton {
+  enabled @0 :Bool;
+}
+
 struct EventArne182 {
   # in nanoseconds?
   logMonoTime @0 :UInt64;
@@ -183,5 +189,7 @@ struct EventArne182 {
     trafficModelRaw @11: TrafficModelRaw;
     trafficModelEvent @12: TrafficModelEvent;
     dynamicFollowData @13 :DynamicFollowData;
+    #e2e button from shane. https://github.com/ShaneSmiskol/openpilot/pull/130/files
+    modelLongButton @14 :ModelLongButton;
   }
 }

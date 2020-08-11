@@ -40,7 +40,7 @@ class opParams:
                            'alca_min_speed': {'default': 15, 'allowed_types': [float, int], 'description': 'Speed limit to start ALC in MPH', 'live': False},
                            'alca_nudge_required': {'default': False, 'allowed_types': [bool], 'description': "Require nudge to start ALC", 'live': False},
                            'camera_offset': {'default': 0.06, 'allowed_types': [float, int], 'description': 'Your camera offset to use in lane_planner.py', 'live': True},
-                           'curvature_factor': {'default': 1.0, 'allowed_types': [float, int], 'description': 'Multiplier for the curvature slowdown. Increase for less braking.', 'live': False},
+                           'curvature_factor': {'default': 1.2, 'allowed_types': [float, int], 'description': 'Multiplier for the curvature slowdown. Increase for less braking.', 'live': False},
                            'cloak': {'default': True, 'allowed_types': [bool], 'description': "make comma believe you are on their fork", 'live': False},
                            'default_brake_distance': {'default': 250.0, 'allowed_types': [float, int], 'description': 'Distance in m to start braking for mapped speeds.', 'live': False},
                            'dynamic_follow': {'default': 'far', 'allowed_types': [str],
@@ -66,7 +66,7 @@ class opParams:
                            'spairrowtuning': {'default': False, 'allowed_types': [bool], 'description': 'Better Tuning for Corolla', 'live': False},
                            'speed_offset': {'default': 0, 'allowed_types': [float, int], 'description': 'Speed limit offset in m/s', 'live': True},
                            'traffic_light_alerts': {'default': False, 'allowed_types': [bool], 'description': "Switch off the traffic light alerts", 'live': False},
-                           'traffic_lights': {'default': True, 'allowed_types': [bool], 'description': "Should Openpilot stop for traffic lights", 'live': False},
+                           'traffic_lights': {'default': False, 'allowed_types': [bool], 'description': "Should Openpilot stop for traffic lights", 'live': False},
                            'traffic_lights_without_direction': {'default': False, 'allowed_types': [bool], 'description': "Should Openpilot stop for traffic lights without a direction specified", 'live': False},
                            'use_car_caching': {'default': True, 'allowed_types': [bool], 'description': 'Whether to use fingerprint caching', 'live': False},
                            'min_TR': {'default': None, 'allowed_types': [type(None), float, int], 'description': 'The minimum allowed following distance in seconds. Default is 0.9 seconds.\n'
