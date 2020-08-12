@@ -77,7 +77,7 @@ class LatControlLQR():
 
       self.scale = self.op_params.get('lqr_scale', default = 1500.0)
       self.ki = self.op_params.get('lqr_ki', default = 0.05)
-      self.scale_add_new = interp(v_ego, self.scaleBP, self.scale_add)
+      self.scale_add_new = interp(CS.vEgo, self.scaleBP, self.scale_add)
 
       # LQR
       u_lqr = float(self.angle_steers_des / self.dc_gain - self.K.dot(self.x_hat))
