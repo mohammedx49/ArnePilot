@@ -13,7 +13,7 @@ STARTING_TARGET_SPEED = 1.0
 BRAKE_THRESHOLD_TO_PID = 0.2
 
 STOPPING_BRAKE_RATE = 0.01  # brake_travel/s while trying to stop
-STARTING_BRAKE_RATE = 0..01  # brake_travel/s while releasing on restart
+STARTING_BRAKE_RATE = 0.01  # brake_travel/s while releasing on restart
 BRAKE_STOPPING_TARGET = 0.01  # apply at least this amount of brake to maintain the vehicle stationary
 
 _MAX_SPEED_ERROR_BP = [0., 30.]  # speed breakpoints
