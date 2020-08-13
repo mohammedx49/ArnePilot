@@ -6,10 +6,10 @@ from selfdrive.config import Conversions as CV
 
 LongCtrlState = log.ControlsState.LongControlState
 
-STOPPING_EGO_SPEED = 0.5
+STOPPING_EGO_SPEED = 1.0
 MIN_CAN_SPEED = 0.3  # TODO: parametrize this in car interface
 STOPPING_TARGET_SPEED = MIN_CAN_SPEED + 0.01
-STARTING_TARGET_SPEED = 0.5
+STARTING_TARGET_SPEED = 1.0
 BRAKE_THRESHOLD_TO_PID = 0.2
 
 STOPPING_BRAKE_RATE = 0.2  # brake_travel/s while trying to stop
@@ -128,7 +128,7 @@ class LongControl():
     # Actuation limits
     #gas_max = interp(CS.vEgo, CP.gasMaxBP, CP.gasMaxV)
     gas_max = self.dynamic_gas(CS.vEgo, gas_interceptor, gas_button_status)
-    brake_max = interp(CS.vEgo, CP.brakeMaxBP, CP.brakeMaxV)
+    #brake_max = interp(CS.vEgo, CP.brakeMaxBP, CP.brakeMaxV)
 
     # Update state machine
     output_gb = self.last_output_gb
@@ -147,7 +147,7 @@ class LongControl():
 
     v_ego_pid = max(CS.vEgo, MIN_CAN_SPEED)  # Without this we get jumps, CAN bus reports 0 when speed < 0.3
 
-    if self.long_control_state == LongCtrlState.off or (CS.brakePressed or CS.gasPressed and not travis):
+    if self.long_control_state == LongCtrlState.off or (CS.brakePressed or CS.gasPressed or CS.regenPressed and not travis):
       self.v_pid = v_ego_pid
       self.pid.reset()
       output_gb = 0.
@@ -156,7 +156,8 @@ class LongControl():
     elif self.long_control_state == LongCtrlState.pid:
       self.v_pid = v_target
       self.pid.pos_limit = gas_max
-      self.pid.neg_limit = - brake_max
+      #self.pid.neg_limit = - brake_max
+      self.pid.neg_limit = 0.0
 
       # Toyota starts braking more when it thinks you want to stop
       # Freeze the integrator so we don't accelerate to compensate, and don't allow positive acceleration
@@ -207,28 +208,30 @@ class LongControl():
     # Intention is to stop, switch to a different brake control until we stop
     elif self.long_control_state == LongCtrlState.stopping:
       # Keep applying brakes until the car is stopped
-      factor = 1
-      if hasLead:
-        factor = interp(dRel,[2.0,3.0,4.0,5.0,6.0,7.0,8.0], [3.0,2.1,1.5,1.0,0.6,0.29,0.0])
-      if not CS.standstill or output_gb > -BRAKE_STOPPING_TARGET:
-        output_gb -= STOPPING_BRAKE_RATE / RATE * factor
-      output_gb = clip(output_gb, -brake_max, gas_max)
+      #factor = 1
+      #if hasLead:
+        #factor = interp(dRel,[2.0,3.0,4.0,5.0,6.0,7.0,8.0], [3.0,2.1,1.5,1.0,0.6,0.29,0.0])
+      #if not CS.standstill or output_gb > -BRAKE_STOPPING_TARGET:
+        #output_gb -= STOPPING_BRAKE_RATE / RATE * factor
+      #output_gb = clip(output_gb, -brake_max, gas_max)
+      output_gb = 0
 
       self.v_pid = CS.vEgo
       self.pid.reset()
 
     # Intention is to move again, release brake fast before handing control to PID
     elif self.long_control_state == LongCtrlState.starting:
-      factor = 1
-      if hasLead:
-        factor = interp(dRel,[0.0,2.0,4.0,6.0], [0.0,0.5,1.0,2.0])
-      if output_gb < -0.2:
-        output_gb += STARTING_BRAKE_RATE / RATE * factor
+      #factor = 1
+      #if hasLead:
+        #factor = interp(dRel,[0.0,2.0,4.0,6.0], [0.0,0.5,1.0,2.0])
+      #if output_gb < -0.2:
+        #output_gb += STARTING_BRAKE_RATE / RATE * factor
       self.v_pid = CS.vEgo
       self.pid.reset()
 
     self.last_output_gb = output_gb
     final_gas = clip(output_gb, 0., gas_max)
-    final_brake = -clip(output_gb, -brake_max, 0.)
+    #final_brake = -clip(output_gb, -brake_max, 0.)
+    final_brake = 0
 
     return final_gas, final_brake

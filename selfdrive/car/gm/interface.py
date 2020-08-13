@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from cereal import car, arne182
+from common.numpy_fast import interp
 from selfdrive.config import Conversions as CV
 from selfdrive.car.gm.values import CAR, Ecu, ECU_FINGERPRINT, CruiseButtons, \
                                     AccState, FINGERPRINTS
@@ -61,6 +62,7 @@ class CarInterface(CarInterfaceBase):
     #ret.steerActuatorDelay = 0.3  # Default delay, not measured yet
     ret.steerActuatorDelay = STEER_DELAY
     ret.steerRateCost = STEER_RATE
+    ret.enableGasInterceptor = 0x201 in fingerprint[0]
 
     if candidate == CAR.VOLT:
       # supports stop and go, but initial engage must be above 18mph (which include conservatism)
@@ -155,15 +157,17 @@ class CarInterface(CarInterfaceBase):
     ret.tireStiffnessFront, ret.tireStiffnessRear = scale_tire_stiffness(ret.mass, ret.wheelbase, ret.centerToFront,
                                                                          tire_stiffness_factor=tire_stiffness_factor)
 
-    ret.longitudinalTuning.kpBP = [5., 35.]
-    #ret.longitudinalTuning.kpV = [2.4, 1.5]
-    ret.longitudinalTuning.kpV = [0.3, 0.3]
-    ret.longitudinalTuning.kiBP = [0.]
-    #ret.longitudinalTuning.kiV = [0.36]
-    ret.longitudinalTuning.kiV = [0.1]
+    ret.longitudinalTuning.kpBP = [0., 35.]
+    ret.longitudinalTuning.kpV = [0.6, 0.7]
+    ret.longitudinalTuning.kiBP = [0., 35.]
+    ret.longitudinalTuning.kiV = [0.12, 0.2]
 
-    ret.stoppingControl = True
-    ret.startAccel = 0.8
+    if ret.enableGasInterceptor:
+      ret.gasMaxBP = [0., 9., 35]
+      ret.gasMaxV = [0.25, 0.5, 0.7]
+
+    ret.stoppingControl = False
+    ret.startAccel = 1.0
 
     ret.steerLimitTimer = 0.4
     ret.radarTimeStep = 0.0667  # GM radar runs at 15Hz instead of standard 20Hz
@@ -195,8 +199,8 @@ class CarInterface(CarInterfaceBase):
         be.pressed = False
         but = self.CS.prev_cruise_buttons
       if but == CruiseButtons.RES_ACCEL:
-        if not (ret.cruiseState.enabled and ret.standstill):
-          be.type = ButtonType.accelCruise  # Suppress resume button if we're resuming from stop so we don't adjust speed.
+        #if not (ret.cruiseState.enabled and ret.standstill):
+        be.type = ButtonType.accelCruise  # Suppress resume button if we're resuming from stop so we don't adjust speed.
       elif but == CruiseButtons.DECEL_SET:
         be.type = ButtonType.decelCruise
       elif but == CruiseButtons.CANCEL:
@@ -208,19 +212,19 @@ class CarInterface(CarInterfaceBase):
     ret.buttonEvents = buttonEvents
 
     events, events_arne182 = self.create_common_events(ret)
+
     if ret.brakePressed:
       events.add(EventName.pedalPressed)
-
     if ret.vEgo < self.CP.minEnableSpeed:
       events.add(EventName.belowEngageSpeed)
     if self.CS.park_brake:
       events.add(EventName.parkBrake)
 
     # handle button presses
-    for b in ret.buttonEvents:
+    #for b in ret.buttonEvents:
       # do enable on both accel and decel buttons
-      if b.type in [ButtonType.accelCruise, ButtonType.decelCruise] and not b.pressed:
-        events.add(EventName.buttonEnable)
+      #if b.type in [ButtonType.accelCruise, ButtonType.decelCruise] and not b.pressed:
+        #events.add(EventName.buttonEnable)
 
     ret.events = events.to_msg()
     ret_arne182.events = events_arne182.to_msg()
