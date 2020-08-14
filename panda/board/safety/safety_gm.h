@@ -155,11 +155,11 @@ static int gm_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     // exit controls on rising edge of gas press if interceptor (0x201 w/ len = 6)
     if (addr == 0x201) {
       gas_interceptor_detected = 1;
-      int gas_interceptor = GET_INTERCEPTOR(to_push);
-      if ((gas_interceptor > GM_GAS_INTERCEPTOR_THRESHOLD) &&
-          (gas_interceptor_prev <= GM_GAS_INTERCEPTOR_THRESHOLD)) {
+      //int gas_interceptor = GET_INTERCEPTOR(to_push);
+      //if ((gas_interceptor > GM_GAS_INTERCEPTOR_THRESHOLD) &&
+      //    (gas_interceptor_prev <= GM_GAS_INTERCEPTOR_THRESHOLD)) {
         //controls_allowed = 0; //TODO: remove / fix (probably problem with threshold)
-      }
+      //}
       gas_interceptor_prev = gas_interceptor;
     }
 
