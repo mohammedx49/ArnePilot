@@ -182,6 +182,7 @@ static int gm_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
 
   int tx = 1;
   int addr = GET_ADDR(to_send);
+  gm_detect_cam();
 
   if (!msg_allowed(to_send, GM_TX_MSGS, sizeof(GM_TX_MSGS)/sizeof(GM_TX_MSGS[0]))) {
     tx = 0;
@@ -295,6 +296,7 @@ static int gm_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
 }
 
 static int gm_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
+  gm_detect_cam();
   int bus_fwd = -1;
   if (bus_num == 0) {
     if (gm_ffc_detected) {
