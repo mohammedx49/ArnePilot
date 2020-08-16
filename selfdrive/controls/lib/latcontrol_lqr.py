@@ -13,9 +13,9 @@ class LatControlLQR():
     self.ki = self.op_params.get('lqr_ki', default = 0.05)
     #self.scale = CP.lateralTuning.lqr.scale
     #self.ki = CP.lateralTuning.lqr.ki
-    self.scale_add = [400, 50]
-    self.scaleBP = [10., 22.2]
-    self.scale_add_new = 0.0
+    #self.scale_add = [400, 50]
+    #self.scaleBP = [10., 22.2]
+    #self.scale_add_new = 0.0
 
     self.A = np.array(CP.lateralTuning.lqr.a).reshape((2, 2))
     self.B = np.array(CP.lateralTuning.lqr.b).reshape((2, 1))
@@ -75,14 +75,14 @@ class LatControlLQR():
     else:
       lqr_log.active = True
 
-      self.scale = self.op_params.get('lqr_scale', default = 1500.0)
-      self.ki = self.op_params.get('lqr_ki', default = 0.05)
-      self.scale_add_new = interp(CS.vEgo, self.scaleBP, self.scale_add)
+      #self.scale = self.op_params.get('lqr_scale', default = 1500.0)
+      #self.ki = self.op_params.get('lqr_ki', default = 0.05)
+      #self.scale_add_new = interp(CS.vEgo, self.scaleBP, self.scale_add)
 
       # LQR
       u_lqr = float(self.angle_steers_des / self.dc_gain - self.K.dot(self.x_hat))
-      #lqr_output = torque_scale * u_lqr / self.scale
-      lqr_output = torque_scale * u_lqr / (self.scale + self.scale_add_new) #Varient scale with speed
+      lqr_output = torque_scale * u_lqr / self.scale
+      #lqr_output = torque_scale * u_lqr / (self.scale + self.scale_add_new) #Varient scale with speed
 
       # Integrator
       if CS.steeringPressed:

@@ -12,23 +12,23 @@ EventName = car.CarEvent.EventName
 
 op_params = opParams()
 #STEER_RATIO = op_params.get('steer_ratio', default = 13.2)
-TIRE_STIFFNESS = op_params.get('tire_stiffness', default = 0.5)
-STEER_RATE = op_params.get('steer_rate', default = 1.0)
-STEER_DELAY = op_params.get('steer_delay', default = 0.3)
+#TIRE_STIFFNESS = op_params.get('tire_stiffness', default = 0.5)
+#STEER_RATE = op_params.get('steer_rate', default = 1.0)
+#STEER_DELAY = op_params.get('steer_delay', default = 0.3)
 
 #LQR_SCALE = op_params.get('lqr_scale', default = 1500.0)
 #LQR_KI = op_params.get('lqr_ki', default = 0.06)
 
-INDI_OLG = op_params.get('indi_olg', default = 15.0)
-INDI_ILG = op_params.get('indi_ilg', default = 6.0)
-INDI_TIME = op_params.get('indi_time', default = 5.5)
-INDI_ACTUATOR = op_params.get('lqr_act', default = 6.0)
+#INDI_OLG = op_params.get('indi_olg', default = 15.0)
+#INDI_ILG = op_params.get('indi_ilg', default = 6.0)
+#INDI_TIME = op_params.get('indi_time', default = 5.5)
+#INDI_ACTUATOR = op_params.get('lqr_act', default = 6.0)
 
-PID_KP1 = op_params.get('kp1', default = 0.1)
-PID_KP2 = op_params.get('kp2', default = 0.24)
-PID_KI1 = op_params.get('ki1', default = 0.01)
-PID_KI2 = op_params.get('ki2', default = 0.019)
-PID_KF = op_params.get('kf', default = 0.00004)
+#PID_KP1 = op_params.get('kp1', default = 0.1)
+#PID_KP2 = op_params.get('kp2', default = 0.24)
+#PID_KI1 = op_params.get('ki1', default = 0.01)
+#PID_KI2 = op_params.get('ki2', default = 0.019)
+#PID_KF = op_params.get('kf', default = 0.00004)
 
 class CarInterface(CarInterfaceBase):
 
@@ -59,8 +59,8 @@ class CarInterface(CarInterfaceBase):
     #ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV, ret.lateralTuning.pid.kfV = [[0.2], [0.00], [0.00004]]   # full torque for 20 deg at 80mph means 0.00007818594
     #ret.steerRateCost = 1.0
     #ret.steerActuatorDelay = 0.3  # Default delay, not measured yet
-    ret.steerActuatorDelay = STEER_DELAY
-    ret.steerRateCost = STEER_RATE
+    ret.steerActuatorDelay = 0.3
+    ret.steerRateCost = 1.0
 
     if candidate == CAR.VOLT:
       # supports stop and go, but initial engage must be above 18mph (which include conservatism)
@@ -76,7 +76,7 @@ class CarInterface(CarInterfaceBase):
       ret.minEnableSpeed = -1.
       ret.mass = 1616. + STD_CARGO_KG
       ret.wheelbase = 2.60096
-      ret.steerRatio = 13.2
+      ret.steerRatio = 12.0
       #ret.steerRatio = STEER_RATIO
       ret.steerRatioRear = 0.
       ret.centerToFront = ret.wheelbase * 0.4 # wild guess
@@ -102,7 +102,7 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.lqr.dcGain = 0.002237852961363602
 
       #tire_stiffness_factor = 0.5
-      tire_stiffness_factor = TIRE_STIFFNESS
+      tire_stiffness_factor = 0.5
 
     elif candidate == CAR.MALIBU:
       # supports stop and go, but initial engage must be above 18mph (which include conservatism)
