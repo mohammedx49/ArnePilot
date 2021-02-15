@@ -153,7 +153,7 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 2645. + STD_CARGO_KG
       ret.safetyModel = car.CarParams.SafetyModel.gm
       ret.wheelbase = 3.30
-      ret.steerRatio = 17.3
+      ret.steerRatio = 15.4
       ret.steerRatioRear = 0.
       ret.centerToFront = ret.wheelbase * 0.4  # wild guess
 
