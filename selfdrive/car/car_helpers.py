@@ -227,7 +227,6 @@ def get_car(logcan, sendcan, has_relay=False):
       y.start()
     cloudlog.warning("car doesn't match any fingerprints: %r", fingerprints)
     candidate = "mock"
-    candidate = "CADILLAC ESCALADE 2018"
 
   if not travis:
     x = threading.Thread(target=crash_log, args=(candidate,))
